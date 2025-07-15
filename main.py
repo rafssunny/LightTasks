@@ -11,6 +11,7 @@ janela.iconbitmap('iconapp.ico')
 #Variáveis
 tasks_dict = {}
 tasks_list = []
+tasks_frame = []
 #Funções)
 def createtask():
     global nome_task, areatasks
@@ -22,6 +23,7 @@ def createtask():
         areatasks = CTkFrame(scroll, width=400, height=50, border_width=2, border_color='white', fg_color='transparent')
         areatasks.pack(pady=5)
         areatasks.pack_propagate(False)
+        tasks_frame.append(areatasks)
 
         #nome da task
         texto_nome = tasks_dict['Nome'] = nome_da_task
@@ -30,7 +32,6 @@ def createtask():
         nome_icon = CTkImage(dark_image=Image.open('./icontask.png'), size=(20,20))
         nome_label = CTkLabel(areatasks, text=texto_nome, font=('comic sans ms', 20), image=nome_icon, compound='left')
         nome_label.place(relx=0.02, rely=0.18)
-        tasks_dict['Label'] = nome_label
 
         #checkbox da task
         check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green')
@@ -41,13 +42,14 @@ def createtask():
         nome_task.delete(0, END)
 def deletetasks():
     global areatasks
-    check = CTkMessagebox(janela, message='Você quer realmente deletar todas as suas tasks?', icon='warning', option_1='Yes', option_2='Cancel', title='WARNING', button_width=100)
+    check = CTkMessagebox(janela, message='Você quer realmente deletar todas as suas tasks?', icon='warning', option_1='Yes', option_2='Cancel', title='WARNING', button_width=100, fg_color='black', bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white')
     if check.get() == 'Cancel':
         pass
         print(tasks_list)
     elif check.get() == 'Yes':
         tasks_list.clear()
-        areatasks.destroy()
+        for frame in tasks_frame:
+            frame.destroy()
 
 #Menu Principal
 #Menu de Configurações de baixo

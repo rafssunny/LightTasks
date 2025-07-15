@@ -19,6 +19,7 @@ def createtask():
     if not nome_da_task:
         CTkMessagebox(janela, message='Input a name on task.', icon='cancel', option_1='Ok', title='ERROR', fg_color='black', border_color='white', border_width=2, bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white', button_width=50)
     else:
+        texto_centro.destroy()
         #frame principal
         areatasks = CTkFrame(scroll, width=400, height=50, border_width=2, border_color='white', fg_color='transparent')
         areatasks.pack(pady=5)
@@ -42,14 +43,25 @@ def createtask():
         nome_task.delete(0, END)
 def deletetasks():
     global areatasks
-    check = CTkMessagebox(janela, message='Você quer realmente deletar todas as suas tasks?', icon='warning', option_1='Yes', option_2='Cancel', title='WARNING', button_width=100, fg_color='black', bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white')
-    if check.get() == 'Cancel':
-        pass
-        print(tasks_list)
-    elif check.get() == 'Yes':
-        tasks_list.clear()
-        for frame in tasks_frame:
-            frame.destroy()
+    if len(tasks_frame) == 0:
+        CTkMessagebox(janela, message='You have not created any tasks.', icon='cancel', option_1='Ok',
+                      title='ERROR', button_width=100, fg_color='black', bg_color='black',
+                      button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30,
+                      cancel_button='white')
+    else:
+        check = CTkMessagebox(janela, message='Do you really want to delete all your tasks?', icon='warning', option_1='Yes', option_2='Cancel', title='WARNING', button_width=100, fg_color='black', bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white')
+        if check.get() == 'Cancel':
+            pass
+            print(tasks_list)
+        elif check.get() == 'Yes':
+            tasks_list.clear()
+            for frame in tasks_frame:
+                frame.destroy()
+        centro_img = CTkImage(dark_image=Image.open('./pastaicon.png'), size=(60, 60))
+        texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20),
+                                image=centro_img, compound='bottom')
+        texto_centro.pack(pady=150)
+        tasks_frame.clear()
 
 #Menu Principal
 #Menu de Configurações de baixo
@@ -64,14 +76,20 @@ config_button.pack(side='right',padx=5)
 delete_image = CTkImage(dark_image=Image.open('./lixeiraicon.png'), size=(20,20))
 delete_button = CTkButton(config_menu, width=40, height=40, text='', image=delete_image, fg_color='#990000', hover_color='#3D0000', command=deletetasks)
 delete_button.pack(side='right')
+
 #Probressbar para as tasks
 progress_bar = CTkProgressBar(config_menu, width=250, height=10, border_color='white', border_width=2, progress_color='#37FD12')
 progress_bar.pack(side='left', padx=10)
 progress_bar.set(0)
+
 #Scroll Frame
 scroll = CTkScrollableFrame(janela, width=400, height=390, fg_color='black', border_width=2, border_color='white', scrollbar_fg_color='black', scrollbar_button_color='white')
 scroll.pack(side='bottom')
 
+#Texto No Centro
+centro_img = CTkImage(dark_image=Image.open('./pastaicon.png'),size=(60,60))
+texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20), image=centro_img, compound='bottom')
+texto_centro.pack(pady=150)
 #Menu de Criação no topo
 opcoes = CTkFrame(janela, width=400, height=50, border_width=2, border_color='white', fg_color='black')
 opcoes.place(relx=0,rely=0)

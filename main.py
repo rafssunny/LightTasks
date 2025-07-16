@@ -9,7 +9,6 @@ janela.resizable(width=False, height=False)
 janela.title('Light Tasks')
 janela.iconbitmap('iconapp.ico')
 
-
 #Variáveis
 tasks_dict = {} # Dicionário com o nome das tasks
 tasks_list = [] # Lista com os valores do Dicionário
@@ -72,6 +71,7 @@ def createtask():
                 janela_comemoracao.grab_set()
                 janela_comemoracao.resizable(False, False)
                 janela_comemoracao.title('LightTasks - Congratulations!')
+                janela_comemoracao.after(250, lambda : janela_comemoracao.iconbitmap('iconapp.ico'))
                 def sair():
                     janela_comemoracao.destroy()
                     janela.deiconify()
@@ -121,13 +121,12 @@ def menuconfig():
     Função que cria o menu de configurações.
     :return: Uma CTKtoplevel é criada com com informações sobre o programa.
     """
-    global logo_image
     janela.withdraw()
     janela_config = CTkToplevel(janela, fg_color='black')
     janela_config.geometry('400x500')
     janela_config.title('LightTasks - Settings')
     janela_config.resizable(False, False)
-    janela_config.iconbitmap('iconapp.ico')
+    janela_config.after(250, lambda: janela_config.iconbitmap('iconapp.ico'))
     #Configs
     def exit():
         """

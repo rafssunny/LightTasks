@@ -30,14 +30,15 @@ def createtask():
         texto_nome = tasks_dict['Nome'] = nome_da_task
         if len(texto_nome) > 25:
             texto_nome = texto_nome[:25]+'...'
-        nome_icon = CTkImage(dark_image=Image.open('./icontask.png'), size=(20,20))
+        nome_icon = CTkImage(dark_image=Image.open('imgs/icontask.png'), size=(20, 20))
         nome_label = CTkLabel(areatasks, text=texto_nome, font=('comic sans ms', 20), image=nome_icon, compound='left')
         nome_label.place(relx=0.02, rely=0.18)
 
         #checkbox da task
-        check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green')
+        check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green', hover_color='#789D73', border_color='white')
         check_box.place(relx=0.90, rely=0.20)
 
+        #Porcesso de lista e limpar entry
         tasks_list.append(tasks_dict.copy())
         tasks_dict.clear()
         nome_task.delete(0, END)
@@ -57,11 +58,44 @@ def deletetasks():
             tasks_list.clear()
             for frame in tasks_frame:
                 frame.destroy()
-        centro_img = CTkImage(dark_image=Image.open('./pastaicon.png'), size=(60, 60))
+        centro_img = CTkImage(dark_image=Image.open('imgs/pastaicon.png'), size=(60, 60))
         texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20),
                                 image=centro_img, compound='bottom')
         texto_centro.pack(pady=150)
         tasks_frame.clear()
+def menuconfig():
+    global logo_image
+    janela.withdraw()
+    janela_config = CTkToplevel(janela, fg_color='black')
+    janela_config.geometry('400x500')
+    janela_config.title('LightTasks - Settings')
+    janela_config.resizable(False, False)
+    janela_config.iconbitmap('iconapp.ico')
+    #Configs
+    def exit():
+        janela_config.destroy()
+        janela.deiconify()
+    #Designer
+    #Frame principal
+    main_frame = CTkFrame(janela_config, border_color='white', border_width=2, width=400, height=500, fg_color='black')
+    main_frame.pack()
+    main_frame.pack_propagate(False)
+    #Logo programa
+    imagem_app = CTkImage(dark_image=Image.open('./iconapp.ico'), size=(100,100))
+    texto_topo = CTkLabel(main_frame, text='LightTasks 1.1', image=imagem_app, compound='bottom', font=('comic sans ms', 40), fg_color='black')
+    texto_topo.pack(pady=5)
+    texto_leave = CTkLabel(main_frame, text='You can exit settings pressing ESC or just closing the window', font=('comic sans ms', 12))
+    texto_leave.pack(side='top')
+    #Informações
+    frame_um = CTkFrame(main_frame, width=350, height=270, fg_color='black', border_width=2, border_color='white')
+    frame_um.pack(side='top')
+    #Textocopyright
+    texto_copyright = CTkLabel(main_frame, text='© 2025 rafssunny', font=('arial bold', 15))
+    texto_copyright.pack()
+
+    janela_config.protocol('WM_DELETE_WINDOW', exit)
+    janela_config.bind("<Escape>", lambda event : exit())
+
 
 #Menu Principal
 #Menu de Configurações de baixo
@@ -70,10 +104,10 @@ config_menu.pack_propagate(False)
 config_menu.pack(side='bottom')
 
 #Botão configuração e Delete
-config_image = CTkImage(dark_image=Image.open('./configicon.png'), size=(20,20))
-config_button = CTkButton(config_menu, width=40, height=40, fg_color='white', text='', hover_color='#b5b5b5', image=config_image)
+config_image = CTkImage(dark_image=Image.open('imgs/configicon.png'), size=(20, 20))
+config_button = CTkButton(config_menu, width=40, height=40, fg_color='white', text='', hover_color='#b5b5b5', image=config_image, command=menuconfig)
 config_button.pack(side='right',padx=5)
-delete_image = CTkImage(dark_image=Image.open('./lixeiraicon.png'), size=(20,20))
+delete_image = CTkImage(dark_image=Image.open('imgs/lixeiraicon.png'), size=(20, 20))
 delete_button = CTkButton(config_menu, width=40, height=40, text='', image=delete_image, fg_color='#990000', hover_color='#3D0000', command=deletetasks)
 delete_button.pack(side='right')
 
@@ -87,9 +121,10 @@ scroll = CTkScrollableFrame(janela, width=400, height=390, fg_color='black', bor
 scroll.pack(side='bottom')
 
 #Texto No Centro
-centro_img = CTkImage(dark_image=Image.open('./pastaicon.png'),size=(60,60))
+centro_img = CTkImage(dark_image=Image.open('imgs/pastaicon.png'), size=(60, 60))
 texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20), image=centro_img, compound='bottom')
 texto_centro.pack(pady=150)
+
 #Menu de Criação no topo
 opcoes = CTkFrame(janela, width=400, height=50, border_width=2, border_color='white', fg_color='black')
 opcoes.place(relx=0,rely=0)
@@ -106,8 +141,9 @@ mytasks_name = CTkLabel(opcoes, text='LightTasks', font=('comic sans ms', 20), f
 mytasks_name.place(relx=0.03, rely=0.15)
 
 
-#Botões
+#Botão Criar task
 criartasks = CTkButton(opcoes, text='+', width=30, height=30, fg_color='white', corner_radius=10, hover_color='#b5b5b5', text_color='black',
                        command=createtask)
 criartasks.place(relx=0.9, rely=0.19)
+
 janela.mainloop()

@@ -10,16 +10,19 @@ janela.title('Light Tasks')
 janela.iconbitmap('iconapp.ico')
 
 #Variáveis
-tasks_dict = {}
-tasks_list = []
-tasks_frame = []
+tasks_dict = {} # Dicionário com o nome das tasks
+tasks_list = [] # Lista com os valores do Dicionário
+tasks_frame = [] # Acesso aos frames das tasks criadas
+total = 0 # total de tasks criadas
+marcadas = 0 # total de tasks marcadas como feitas
+
 #Funções)
 def createtask():
     """
     Função para criar uma task no programa.
     :return: Task no menu principal com o nome inserido pelo usuário, juntamente com uma checkbox.
     """
-    global nome_task, areatasks
+    global nome_task, areatasks, total
     nome_da_task = nome_task.get()
     if not nome_da_task:
         CTkMessagebox(janela, message='Input a name on task.', icon='cancel', option_1='Ok', title='ERROR', fg_color='black', border_color='white', border_width=2, bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white', button_width=50)
@@ -40,14 +43,32 @@ def createtask():
         nome_label = CTkLabel(areatasks, text=texto_nome, font=('comic sans ms', 20), image=nome_icon, compound='left')
         nome_label.place(relx=0.02, rely=0.18)
 
-        #checkbox da task
-        check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green', hover_color='#789D73', border_color='white')
-        check_box.place(relx=0.90, rely=0.20)
-
-        #Porcesso de lista e limpar entry
+        #Processo de lista e limpar entry
         tasks_list.append(tasks_dict.copy())
         tasks_dict.clear()
         nome_task.delete(0, END)
+
+        #checkbox da task
+        check_value = StringVar(value='off')
+        total+=1
+        def aumentoprogressbar():
+            """
+            Aumento da barra de progresso a medida que as tasks forem sendo feitas.
+            :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficará completa.
+            """
+            global marcadas
+            valor = check_box.get()
+            print(valor)
+            if valor == 'on':
+                marcadas+=1
+            if valor == 'off':
+                marcadas-=1
+            progresso = marcadas/total
+            progress_bar.set(progresso)
+
+        check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green', hover_color='#789D73', border_color='white', variable=check_value, command=aumentoprogressbar)
+        check_box.place(relx=0.90, rely=0.20)
+
 def deletetasks():
     """
     Função que deleta todas as tasks do usuário.
@@ -129,12 +150,6 @@ def menuconfig():
     janela_config.protocol('WM_DELETE_WINDOW', exit)
     janela_config.bind("<Escape>", lambda event : exit())
 
-def aumentoprogressbar():
-    """
-    Aumento da barra de progresso a medida que as tasks forem sendo feitas.
-    :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficará completa.
-    """
-    progresso = 1/len(tasks_list)
 
 #Menu Principal
 #Menu de Configurações de baixo

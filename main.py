@@ -15,7 +15,6 @@ tasks_list = [] # Lista com os valores do Dicionário
 tasks_frame = [] # Acesso aos frames das tasks criadas
 checkbox_values = []
 
-
 #Funções)
 def createtask():
     """
@@ -111,11 +110,11 @@ def deletetasks():
             progress_bar.set(0)
             for frame in tasks_frame:
                 frame.destroy()
+            tasks_frame.clear()
         centro_img = CTkImage(dark_image=Image.open('imgs/pastaicon.png'), size=(60, 60))
         texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20),
                                 image=centro_img, compound='bottom')
         texto_centro.pack(pady=150)
-        tasks_frame.clear()
 def menuconfig():
     """
     Função que cria o menu de configurações.

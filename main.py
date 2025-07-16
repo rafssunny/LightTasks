@@ -1,6 +1,7 @@
 from customtkinter import *
 from PIL import Image
 from CTkMessagebox import CTkMessagebox
+import webbrowser
 
 janela = CTk()
 janela.geometry('400x500')
@@ -14,6 +15,10 @@ tasks_list = []
 tasks_frame = []
 #Funções)
 def createtask():
+    """
+    Função para criar uma task no programa.
+    :return: Task no menu principal com o nome inserido pelo usuário, juntamente com uma checkbox.
+    """
     global nome_task, areatasks
     nome_da_task = nome_task.get()
     if not nome_da_task:
@@ -30,6 +35,7 @@ def createtask():
         texto_nome = tasks_dict['Nome'] = nome_da_task
         if len(texto_nome) > 25:
             texto_nome = texto_nome[:25]+'...'
+            texto_nome = texto_nome.capitalize()
         nome_icon = CTkImage(dark_image=Image.open('imgs/icontask.png'), size=(20, 20))
         nome_label = CTkLabel(areatasks, text=texto_nome, font=('comic sans ms', 20), image=nome_icon, compound='left')
         nome_label.place(relx=0.02, rely=0.18)
@@ -43,6 +49,10 @@ def createtask():
         tasks_dict.clear()
         nome_task.delete(0, END)
 def deletetasks():
+    """
+    Função que deleta todas as tasks do usuário.
+    :return: Todas as tasks até então feitas serão deletadas, desde que o usuário tenha criado ao menos uma task.
+    """
     global areatasks
     if len(tasks_frame) == 0:
         CTkMessagebox(janela, message='You have not created any tasks.', icon='cancel', option_1='Ok',
@@ -64,6 +74,10 @@ def deletetasks():
         texto_centro.pack(pady=150)
         tasks_frame.clear()
 def menuconfig():
+    """
+    Função que cria o menu de configurações.
+    :return: Uma CTKtoplevel é criada com com informações sobre o programa.
+    """
     global logo_image
     janela.withdraw()
     janela_config = CTkToplevel(janela, fg_color='black')
@@ -73,8 +87,19 @@ def menuconfig():
     janela_config.iconbitmap('iconapp.ico')
     #Configs
     def exit():
+        """
+        Destrói a CtkToplevel e retorna a janela principal que havia sumido.
+        :return: A Janela principal retorna.
+        """
         janela_config.destroy()
         janela.deiconify()
+    def entrartwitter():
+        """
+        Abrir a página do meu twitter e pegar o navegador padrão do computador do usuário
+        :return: Abre a página do meu twitter.
+        """
+        navegador = webbrowser.get()
+        navegador.open('https://x.com/rafssunny')
     #Designer
     #Frame principal
     main_frame = CTkFrame(janela_config, border_color='white', border_width=2, width=400, height=500, fg_color='black')
@@ -89,6 +114,14 @@ def menuconfig():
     #Informações
     frame_um = CTkFrame(main_frame, width=350, height=270, fg_color='black', border_width=2, border_color='white')
     frame_um.pack(side='top')
+    frame_um.pack_propagate(False)
+    texto_save = CTkLabel(frame_um, text='All your files are saved automatically', font=('comic sans ms', 12))
+    texto_save.pack(side='top', pady=10)
+    texto_program = CTkLabel(frame_um, text='The program is under development and may\n present bugs, any problems contact me through my X\n\nClick on the cat', font=('comic sans ms', 12))
+    texto_program.pack(side='top')
+    gato_image = CTkImage(dark_image=Image.open('imgs/gatofundo.jpg'), size=(150,150))
+    botao_gato = CTkButton(frame_um, text='', image=gato_image, fg_color='black', command=entrartwitter, hover_color='black')
+    botao_gato.pack(side='top', pady=30)
     #Textocopyright
     texto_copyright = CTkLabel(main_frame, text='© 2025 rafssunny', font=('arial bold', 15))
     texto_copyright.pack()
@@ -96,6 +129,12 @@ def menuconfig():
     janela_config.protocol('WM_DELETE_WINDOW', exit)
     janela_config.bind("<Escape>", lambda event : exit())
 
+def aumentoprogressbar():
+    """
+    Aumento da barra de progresso a medida que as tasks forem sendo feitas.
+    :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficará completa.
+    """
+    progresso = 1/len(tasks_list)
 
 #Menu Principal
 #Menu de Configurações de baixo

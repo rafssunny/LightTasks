@@ -9,12 +9,13 @@ janela.resizable(width=False, height=False)
 janela.title('Light Tasks')
 janela.iconbitmap('iconapp.ico')
 
+
 #Variáveis
 tasks_dict = {} # Dicionário com o nome das tasks
 tasks_list = [] # Lista com os valores do Dicionário
 tasks_frame = [] # Acesso aos frames das tasks criadas
-total = 0 # total de tasks criadas
-marcadas = 0 # total de tasks marcadas como feitas
+checkbox_values = []
+
 
 #Funções)
 def createtask():
@@ -22,7 +23,7 @@ def createtask():
     Função para criar uma task no programa.
     :return: Task no menu principal com o nome inserido pelo usuário, juntamente com uma checkbox.
     """
-    global nome_task, areatasks, total
+    global nome_task, areatasks, valor
     nome_da_task = nome_task.get()
     if not nome_da_task:
         CTkMessagebox(janela, message='Input a name on task.', icon='cancel', option_1='Ok', title='ERROR', fg_color='black', border_color='white', border_width=2, bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white', button_width=50)
@@ -50,23 +51,42 @@ def createtask():
 
         #checkbox da task
         check_value = StringVar(value='off')
-        total+=1
         def aumentoprogressbar():
             """
             Aumento da barra de progresso a medida que as tasks forem sendo feitas.
             :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficará completa.
             """
-            global marcadas
-            valor = check_box.get()
-            print(valor)
-            if valor == 'on':
-                marcadas+=1
-            if valor == 'off':
-                marcadas-=1
-            progresso = marcadas/total
-            progress_bar.set(progresso)
+            marcadas = 0
+            for marcados in checkbox_values:
+                if marcados.get() == 'on':
+                    marcadas+=1
+            if len(checkbox_values) > 0:
+                progresso = marcadas/len(checkbox_values)
+                progress_bar.set(progresso)
 
+            #Tela de Parabenização
+            if progress_bar.get() == 1:
+                janela.withdraw()
+                janela_comemoracao = CTkToplevel(janela, fg_color='black')
+                janela_comemoracao.geometry('400x300')
+                janela_comemoracao.grab_set()
+                janela_comemoracao.resizable(False, False)
+                janela_comemoracao.title('LightTasks - Congratulations!')
+                def sair():
+                    janela_comemoracao.destroy()
+                    janela.deiconify()
+                gatopulando_img = CTkImage(dark_image=Image.open('./imgs/gatopulando.jpg'), size=(200,200))
+                gatopulando_label = CTkLabel(janela_comemoracao, image=gatopulando_img, text='')
+                gatopulando_label.pack(side='top')
+                texto_parabens = CTkLabel(janela_comemoracao, text='Congratulations on doing all your tasks, get rest!', font=('comic sans ms', 17))
+                texto_parabens.pack()
+                botao_sair = CTkButton(janela_comemoracao, text='Thanks!', border_width=3, border_color='white', fg_color='black', command=sair, font=('comic sans ms', 30), hover_color='#b5b5b5')
+                botao_sair.pack(side='bottom', pady=20)
+
+                janela_comemoracao.protocol('WM_DELETE_WINDOW', sair)
         check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green', hover_color='#789D73', border_color='white', variable=check_value, command=aumentoprogressbar)
+        checkbox_values.append(check_box)
+        aumentoprogressbar()
         check_box.place(relx=0.90, rely=0.20)
 
 def deletetasks():
@@ -74,19 +94,21 @@ def deletetasks():
     Função que deleta todas as tasks do usuário.
     :return: Todas as tasks até então feitas serão deletadas, desde que o usuário tenha criado ao menos uma task.
     """
-    global areatasks
+    global areatasks, texto_centro
     if len(tasks_frame) == 0:
         CTkMessagebox(janela, message='You have not created any tasks.', icon='cancel', option_1='Ok',
                       title='ERROR', button_width=100, fg_color='black', bg_color='black',
                       button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30,
                       cancel_button='white')
     else:
+        texto_centro.destroy()
         check = CTkMessagebox(janela, message='Do you really want to delete all your tasks?', icon='warning', option_1='Yes', option_2='Cancel', title='WARNING', button_width=100, fg_color='black', bg_color='black', button_color='white', button_text_color='black', button_hover_color='#b5b5b5', corner_radius=30, cancel_button='white')
         if check.get() == 'Cancel':
             pass
-            print(tasks_list)
         elif check.get() == 'Yes':
             tasks_list.clear()
+            checkbox_values.clear()
+            progress_bar.set(0)
             for frame in tasks_frame:
                 frame.destroy()
         centro_img = CTkImage(dark_image=Image.open('imgs/pastaicon.png'), size=(60, 60))
@@ -120,7 +142,7 @@ def menuconfig():
         :return: Abre a página do meu twitter.
         """
         navegador = webbrowser.get()
-        navegador.open('https://x.com/rafssunny')
+        navegador.open('https://linktr.ee/rafssunny')
     #Designer
     #Frame principal
     main_frame = CTkFrame(janela_config, border_color='white', border_width=2, width=400, height=500, fg_color='black')
@@ -147,6 +169,7 @@ def menuconfig():
     texto_copyright = CTkLabel(main_frame, text='© 2025 rafssunny', font=('arial bold', 15))
     texto_copyright.pack()
 
+    #Fechar janela
     janela_config.protocol('WM_DELETE_WINDOW', exit)
     janela_config.bind("<Escape>", lambda event : exit())
 

@@ -9,13 +9,36 @@ janela.resizable(width=False, height=False)
 janela.title('Light Tasks')
 janela.iconbitmap('iconapp.ico')
 
-#Variáveis
+# Variáveis
 tasks_dict = {} # Dicionário com o nome das tasks
 tasks_list = [] # Lista com os valores do Dicionário
 tasks_frame = [] # Acesso aos frames das tasks criadas
 checkbox_values = []
-
-#Funções)
+# Salvamento do programa
+try:
+    with open('tasks.txt', 'r') as n:
+        n.read()
+except:
+    with open('tasks.txt', 'wt+') as n:
+        n.write('')
+def carregartasks():
+    global scroll, texto_centro
+    try:
+        with open('tasks.txt', 'r') as n:
+            linhas = n.readlines()
+            for n in linhas:
+                texto_centro.destroy()
+                nome_salvo = n.strip()
+                areatasks = CTkFrame(scroll, width=400, height=50, border_width=2, border_color='white', fg_color='transparent')
+                areatasks.pack(pady=5)
+                areatasks.pack_propagate(False)
+                tasks_frame.append(areatasks)
+                nome_icon = CTkImage(dark_image=Image.open('imgs/icontask.png'), size=(20, 20))
+                nome_label = CTkLabel(areatasks, text=nome_salvo, font=('comic sans ms', 20), image=nome_icon, compound='left')
+                nome_label.place(relx=0.02, rely=0.18)
+    except Exception as e:
+        print(e)
+        pass
 def createtask():
     """
     Função para criar uma task no programa.
@@ -46,6 +69,8 @@ def createtask():
         tasks_list.append(tasks_dict.copy())
         tasks_dict.clear()
         nome_task.delete(0, END)
+        with open('tasks.txt', 'a') as a:
+            a.write(nome_da_task + '\n')
 
         #checkbox da task
         check_value = StringVar(value='off')
@@ -87,7 +112,7 @@ def createtask():
         checkbox_values.append(check_box)
         aumentoprogressbar()
         check_box.place(relx=0.90, rely=0.20)
-
+        #Salvamento do programa
 def deletetasks():
     """
     Função que deleta todas as tasks do usuário.
@@ -111,6 +136,8 @@ def deletetasks():
             for frame in tasks_frame:
                 frame.destroy()
             tasks_frame.clear()
+            with open('tasks.txt', 'w') as n:
+                n.write('')
         centro_img = CTkImage(dark_image=Image.open('imgs/pastaicon.png'), size=(60, 60))
         texto_centro = CTkLabel(scroll, text='All your created tasks appeared here', font=('comic sans ms', 20),
                                 image=centro_img, compound='bottom')
@@ -171,7 +198,6 @@ def menuconfig():
     janela_config.protocol('WM_DELETE_WINDOW', exit)
     janela_config.bind("<Escape>", lambda event : exit())
 
-
 #Menu Principal
 #Menu de Configurações de baixo
 config_menu = CTkFrame(janela, width=400, height=50, fg_color='black', border_width=2, border_color='white')
@@ -220,5 +246,5 @@ mytasks_name.place(relx=0.03, rely=0.15)
 criartasks = CTkButton(opcoes, text='+', width=30, height=30, fg_color='white', corner_radius=10, hover_color='#b5b5b5', text_color='black',
                        command=createtask)
 criartasks.place(relx=0.9, rely=0.19)
-
+carregartasks()
 janela.mainloop()

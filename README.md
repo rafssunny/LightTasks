@@ -6,6 +6,7 @@ I'm using CustomTkinter to build the GUI. The software is currently in developme
 - New visual in main menu.
 - New ProgressBar that'll be growing according the tasks are completed.
 - New Configuration Menu.
+- Now created tasks have automatic saving
 - Now you can creat how much tasks you want.
 - Now the tasks have a checkbox.
 - Now the create task menu in in the main menu, to more minimalism and optimization.

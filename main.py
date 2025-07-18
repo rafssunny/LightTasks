@@ -3,6 +3,7 @@ from PIL import Image
 from CTkMessagebox import CTkMessagebox
 import webbrowser
 
+
 def centralizar(janela, largura, altura):
     """
     Centraliza a Janela criada no monitor do usuário.
@@ -19,7 +20,8 @@ def centralizar(janela, largura, altura):
     pox_y = int((altura_tela/2) - int(altura_janela/2))
     janela.geometry(f'{largura_janela}x{altura_janela}+{pos_x}+{pox_y}')
 
-#Janela principal
+
+# Janela principal
 janela = CTk()
 centralizar(janela, 400, 500)
 janela.resizable(width=False, height=False)
@@ -54,7 +56,7 @@ def aumentoprogressbar():
         progresso = marcadas/len(checkbox_values)
         progress_bar.set(progresso)
 
-    #Tela de Parabenização
+    # Tela de Parabenização
     if progress_bar.get() == 1:
         janela.withdraw()
         janela_comemoracao = CTkToplevel(janela, fg_color='black')

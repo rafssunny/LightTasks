@@ -1,5 +1,5 @@
 # LightTasks
-A software to register daily tasks.
+A software to register daily tasks(To Do List).
 I'm using CustomTkinter to build the GUI. The software is currently in development.
 
 ## Updates(1.1):

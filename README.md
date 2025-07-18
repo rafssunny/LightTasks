@@ -16,4 +16,5 @@ I'm using CustomTkinter to build the GUI. The software is currently in developme
 ## Planned features:
 - Create a menu with RPG character customization, where users can unlock options by leveling up
 - Enable users to delete individual tasks
+- Save checkbox states
 - More improvements, bug fixes, and new mechanics

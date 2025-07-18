@@ -3,8 +3,25 @@ from PIL import Image
 from CTkMessagebox import CTkMessagebox
 import webbrowser
 
+def centralizar(janela, largura, altura):
+    """
+    Centraliza a Janela criada no monitor do usuário.
+    :param janela: Nome da janela CTk que vai ser centralizada
+    :param largura: largura da janela
+    :param altura: altura da janela
+    :return: A tela centralizada de acordo com o tamanho do monitor do usuário
+    """
+    largura_janela = largura
+    altura_janela = altura
+    largura_tela = janela.winfo_screenwidth()
+    altura_tela = janela.winfo_screenheight()
+    pos_x = int((largura_tela/2) - int(largura_janela/2))
+    pox_y = int((altura_tela/2) - int(altura_janela/2))
+    janela.geometry(f'{largura_janela}x{altura_janela}+{pos_x}+{pox_y}')
+
+#Janela principal
 janela = CTk()
-janela.geometry('400x500')
+centralizar(janela, 400, 500)
 janela.resizable(width=False, height=False)
 janela.title('Light Tasks')
 janela.iconbitmap('iconapp.ico')
@@ -14,31 +31,50 @@ tasks_dict = {} # Dicionário com o nome das tasks
 tasks_list = [] # Lista com os valores do Dicionário
 tasks_frame = [] # Acesso aos frames das tasks criadas
 checkbox_values = []
-# Salvamento do programa
+
+# Criando arquivos de salvamento do programa
 try:
     with open('tasks.txt', 'r') as n:
         n.read()
 except:
     with open('tasks.txt', 'wt+') as n:
         n.write('')
-def carregartasks():
-    global scroll, texto_centro
-    try:
-        with open('tasks.txt', 'r') as n:
-            linhas = n.readlines()
-            for n in linhas:
-                texto_centro.destroy()
-                nome_salvo = n.strip()
-                areatasks = CTkFrame(scroll, width=400, height=50, border_width=2, border_color='white', fg_color='transparent')
-                areatasks.pack(pady=5)
-                areatasks.pack_propagate(False)
-                tasks_frame.append(areatasks)
-                nome_icon = CTkImage(dark_image=Image.open('imgs/icontask.png'), size=(20, 20))
-                nome_label = CTkLabel(areatasks, text=nome_salvo, font=('comic sans ms', 20), image=nome_icon, compound='left')
-                nome_label.place(relx=0.02, rely=0.18)
-    except Exception as e:
-        print(e)
-        pass
+def aumentoprogressbar():
+    """
+    Aumento da barra de progresso a medida que as tasks forem sendo feitas.
+    :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficarcompleta.
+    """
+    marcadas = 0
+    estados = []
+    for marcados in checkbox_values:
+        if marcados.get() == 'on':
+            marcadas+=1
+            estados.append(marcados.get())
+    if len(checkbox_values) > 0:
+        progresso = marcadas/len(checkbox_values)
+        progress_bar.set(progresso)
+
+    #Tela de Parabenização
+    if progress_bar.get() == 1:
+        janela.withdraw()
+        janela_comemoracao = CTkToplevel(janela, fg_color='black')
+        centralizar(janela_comemoracao,400, 300)
+        janela_comemoracao.grab_set()
+        janela_comemoracao.resizable(False, False)
+        janela_comemoracao.title('LightTasks - Congratulations!')
+        janela_comemoracao.after(250, lambda : janela_comemoracao.iconbitmap('iconapp.ico'))
+        def sair():
+            janela_comemoracao.destroy()
+            janela.deiconify()
+        gatopulando_img = CTkImage(dark_image=Image.open('./imgs/gatopulando.jpg'), size=(200,200))
+        gatopulando_label = CTkLabel(janela_comemoracao, image=gatopulando_img, text='')
+        gatopulando_label.pack(side='top')
+        texto_parabens = CTkLabel(janela_comemoracao, text='Congratulations on doing all your tasks, get rest!', font=('comic sans ms', 17))
+        texto_parabens.pack()
+        botao_sair = CTkButton(janela_comemoracao, text='Thanks!', border_width=3, border_color='white', fg_color='black', command=sair, font=('comic sans ms', 30), hover_color='#b5b5b5')
+        botao_sair.pack(side='bottom', pady=20)
+
+        janela_comemoracao.protocol('WM_DELETE_WINDOW', sair)
 def createtask():
     """
     Função para criar uma task no programa.
@@ -74,45 +110,38 @@ def createtask():
 
         #checkbox da task
         check_value = StringVar(value='off')
-        def aumentoprogressbar():
-            """
-            Aumento da barra de progresso a medida que as tasks forem sendo feitas.
-            :return: Sempre que uma task for feita um valor vai ser adicionado na barra de progresso, quando todas estiverem feitas ela ficará completa.
-            """
-            marcadas = 0
-            for marcados in checkbox_values:
-                if marcados.get() == 'on':
-                    marcadas+=1
-            if len(checkbox_values) > 0:
-                progresso = marcadas/len(checkbox_values)
-                progress_bar.set(progresso)
-
-            #Tela de Parabenização
-            if progress_bar.get() == 1:
-                janela.withdraw()
-                janela_comemoracao = CTkToplevel(janela, fg_color='black')
-                janela_comemoracao.geometry('400x300')
-                janela_comemoracao.grab_set()
-                janela_comemoracao.resizable(False, False)
-                janela_comemoracao.title('LightTasks - Congratulations!')
-                janela_comemoracao.after(250, lambda : janela_comemoracao.iconbitmap('iconapp.ico'))
-                def sair():
-                    janela_comemoracao.destroy()
-                    janela.deiconify()
-                gatopulando_img = CTkImage(dark_image=Image.open('./imgs/gatopulando.jpg'), size=(200,200))
-                gatopulando_label = CTkLabel(janela_comemoracao, image=gatopulando_img, text='')
-                gatopulando_label.pack(side='top')
-                texto_parabens = CTkLabel(janela_comemoracao, text='Congratulations on doing all your tasks, get rest!', font=('comic sans ms', 17))
-                texto_parabens.pack()
-                botao_sair = CTkButton(janela_comemoracao, text='Thanks!', border_width=3, border_color='white', fg_color='black', command=sair, font=('comic sans ms', 30), hover_color='#b5b5b5')
-                botao_sair.pack(side='bottom', pady=20)
-
-                janela_comemoracao.protocol('WM_DELETE_WINDOW', sair)
         check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30, fg_color='green', hover_color='#789D73', border_color='white', variable=check_value, command=aumentoprogressbar)
         checkbox_values.append(check_box)
         aumentoprogressbar()
         check_box.place(relx=0.90, rely=0.20)
-        #Salvamento do programa
+def carregartasks():
+    """
+    Carregar as tasks que foram criadas da ultima vez que o programa foi utilizado
+    :return: Todas as tasks criadas, salvas no arquivo txt
+    """
+    global scroll, texto_centro, aumentoprogressbar,check_value
+    try:
+        with open('tasks.txt', 'r') as n:
+            linhas = n.readlines()
+            for n in linhas:
+                texto_centro.destroy()
+                nome_salvo = n.strip()
+                areatasks = CTkFrame(scroll, width=400, height=50, border_width=2, border_color='white', fg_color='transparent')
+                areatasks.pack(pady=5)
+                areatasks.pack_propagate(False)
+                tasks_frame.append(areatasks)
+                nome_icon = CTkImage(dark_image=Image.open('imgs/icontask.png'), size=(20, 20))
+                nome_label = CTkLabel(areatasks, text=nome_salvo, font=('comic sans ms', 20), image=nome_icon, compound='left')
+                nome_label.place(relx=0.02, rely=0.18)
+                check_value = StringVar(value='off')
+                check_box = CTkCheckBox(areatasks, text='', onvalue='on', offvalue='off', width=30, height=30,
+                                        fg_color='green', hover_color='#789D73', border_color='white',
+                                        variable=check_value, command=aumentoprogressbar)
+                checkbox_values.append(check_box)
+                check_box.place(relx=0.90, rely=0.20)
+    except Exception as e:
+        print(e)
+        pass
 def deletetasks():
     """
     Função que deleta todas as tasks do usuário.
@@ -149,7 +178,7 @@ def menuconfig():
     """
     janela.withdraw()
     janela_config = CTkToplevel(janela, fg_color='black')
-    janela_config.geometry('400x500')
+    centralizar(janela_config, 400, 500)
     janela_config.title('LightTasks - Settings')
     janela_config.resizable(False, False)
     janela_config.after(250, lambda: janela_config.iconbitmap('iconapp.ico'))
@@ -241,10 +270,12 @@ logo_image = CTkImage(dark_image=Image.open('./iconapp.ico'), size=(30,30))
 mytasks_name = CTkLabel(opcoes, text='LightTasks', font=('comic sans ms', 20), fg_color='transparent', image=logo_image, compound='left')
 mytasks_name.place(relx=0.03, rely=0.15)
 
-
 #Botão Criar task
 criartasks = CTkButton(opcoes, text='+', width=30, height=30, fg_color='white', corner_radius=10, hover_color='#b5b5b5', text_color='black',
                        command=createtask)
 criartasks.place(relx=0.9, rely=0.19)
+
+#Carregamentos vitais
 carregartasks()
+aumentoprogressbar()
 janela.mainloop()

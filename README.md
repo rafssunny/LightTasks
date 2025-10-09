@@ -1,7 +1,7 @@
 # LightTasks
 A software to register daily tasks(To Do List).
 I'm using CustomTkinter to build the GUI. The software is currently in development.
-![print_programa](https://github.com/user-attachments/assets/988555d0-b199-4a57-ad3d-6b046436d4d0)
+![print_programa](https://github.com/user-attachments/assets/874c4180-2f3c-497e-b5c1-e7a11b8d0404)
 
 ## Updates(1.1):
 - New visual in main menu.

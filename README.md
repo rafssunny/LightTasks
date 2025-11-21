@@ -8,7 +8,7 @@ I used the CustomTkinter library to build the GUI.
 - Language: **Python**
 - Interface: **CustomTkinter**
 - Messagebox: **CTkMessageBox**
-- Imagens: **PIL**
+- Images: **PIL**
 - Outros: **webbrowser**
 
 ## 🚀 How to install

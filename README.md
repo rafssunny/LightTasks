@@ -9,7 +9,7 @@ I used the CustomTkinter library to build the GUI.
 - Interface: **CustomTkinter**
 - Messagebox: **CTkMessageBox**
 - Images: **PIL**
-- Outros: **webbrowser**
+- Others: **webbrowser**
 
 ## 🚀 How to install
 
